@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.eggs/
+*.egg-info/
+*.egg
+
+# PyTorch
+*.pt
+*.pth
+lightning_logs/
+
+# Hydra
+outputs/
+multirun/
+.hydra/
+
+# IDE / Editor specific
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Other
+*.log
+*.tmp
+*.bak

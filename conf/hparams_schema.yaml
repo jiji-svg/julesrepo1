@@ -1,0 +1,100 @@
+# Structured config schema using OmegaConf
+# Ensures type checking and provides autocompletion benefits.
+
+# Top-level schema node
+config_schema:
+  type: object
+  properties:
+    app_name:
+      type: string
+      description: "Name of the application."
+    version:
+      type: string
+      description: "Version of the application."
+    paths:
+      type: object
+      properties:
+        log_dir:
+          type: string
+          description: "Directory for logs."
+        data_dir:
+          type: string
+          description: "Directory for input data."
+        output_dir:
+          type: string
+          description: "Directory for output artifacts."
+      required:
+        - log_dir
+        - data_dir
+        - output_dir
+    model:
+      type: object
+      properties:
+        name:
+          type: string
+          enum: ["SimpleCNN", "ResNet", "CustomModel"] # Example model names
+          default: "SimpleCNN"
+        params:
+          type: object # Model-specific parameters
+          properties:
+            num_classes:
+              type: integer
+              default: 10
+              minimum: 1
+            # Add other model parameters here, e.g., layers, hidden_units
+          required:
+            - num_classes
+      required:
+        - name
+        - params
+    training:
+      type: object
+      properties:
+        device:
+          type: string
+          enum: ["cuda", "cpu"]
+          default: "cuda"
+        epochs:
+          type: integer
+          default: 10
+          minimum: 1
+        batch_size:
+          type: integer
+          default: 32
+          minimum: 1
+        log_interval:
+          type: integer
+          default: 100
+          minimum: 1
+        optimizer:
+          type: object
+          properties:
+            name:
+              type: string
+              enum: ["Adam", "SGD"]
+              default: "Adam"
+            lr:
+              type: number
+              default: 0.001
+              exclusiveMinimum: 0.0 # learning rate must be positive
+            # Add other optimizer params like weight_decay, momentum
+          required:
+            - name
+            - lr
+      required:
+        - device
+        - epochs
+        - batch_size
+        - optimizer
+    # hydra: # Hydra's own schema is usually not redefined here unless for very specific overrides
+    #   type: object
+
+  required:
+    - app_name
+    - paths
+    - model
+    - training
+
+# This file defines the *expected* structure and types.
+# It's used by Hydra for validation if you use structured configs (OmegaConf).
+# The actual values are in config.yaml or overridden via command line.
