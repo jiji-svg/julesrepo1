@@ -1,0 +1,53 @@
+# @package _group_
+defaults:
+  - _self_
+  - hparams_schema # Refers to hparams_schema.yaml
+
+# Application specific configurations
+app_name: "MyPytorchHydraApp"
+version: "1.0.0"
+
+# Paths (can be overridden)
+paths:
+  log_dir: ${hydra:run.dir} # Default log directory to hydra's run directory
+  data_dir: /path/to/your/dataset # TODO: Update this path
+  output_dir: ${hydra:sweep.dir}/outputs/${hydra:sweep.subdir} # For multirun outputs
+
+# Model configuration
+model:
+  name: SimpleCNN
+  params:
+    num_classes: 10 # Example: MNIST
+
+# Training configuration
+training:
+  device: "cuda" # "cuda" or "cpu"
+  epochs: 10
+  batch_size: 64
+  log_interval: 10 # Log every N batches
+  optimizer:
+    name: Adam
+    lr: 0.001
+  # Add other training related params like learning rate schedulers, etc.
+
+# Hydra specific configurations
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.num}
+  job_logging:
+    formatters:
+      simple:
+        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+  hydra_logging:
+    formatters:
+      simple:
+        format: '[%(asctime)s][HYDRA][%(levelname)s] - %(message)s'
+
+# You can add more groups like dataset, preprocessing, etc.
+# dataset:
+#   name: MNIST
+#   path: ${paths.data_dir}
+#   img_size: [1, 28, 28] # Channels, Height, Width
